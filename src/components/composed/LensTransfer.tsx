@@ -98,8 +98,8 @@ export const LensTransfer = ({
         {
           onSuccess: (result) => {
             toast({
-              title: "Success",
-              description: "Transaction successful!",
+              title: "View Transaction",
+              description: "View the transaction on the blockchain explorer",
               action: (
                 <ToastAction
                   onClick={() => {

@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "../ui/progress";
 
-export default function Cooldown({ endsOn }: { endsOn: string | null }) {
+export default function Cooldown({
+  endsOn,
+}: {
+  readonly endsOn: string | null;
+}) {
   // the endsOn starts at 7 days from cooldown start
   const daysRemaining = endsOn
     ? Math.ceil(
