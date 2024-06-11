@@ -12,27 +12,25 @@ import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
+import { TransferSelection } from "./LensApp";
 interface LensTransferProps extends React.HTMLProps<HTMLInputElement> {
   disabled?: boolean;
   profile: Profile;
-}
-enum TransferSelection {
-  Profile,
-  Handle,
+  transferSelection: TransferSelection;
+  setTransferSelection: (selection: TransferSelection) => void;
 }
 
 export const LensTransfer = ({
   disabled = false,
   profile,
+  transferSelection,
+  setTransferSelection,
 }: LensTransferProps) => {
   const [isValidToAddress, setIsValidToAddress] = useState<boolean>(false);
   const [rawTokenAddress, setRawTokenAddress] = useState<string>("");
   const { ensAddress: ensAddy, ensAvatar } = useEnsProfile({
     ensName: rawTokenAddress,
   });
-  const [transferSelection, setTransferSelection] = useState<TransferSelection>(
-    TransferSelection.Profile,
-  );
 
   const [handleId, setHandleId] = useState<string | null>(null);
 
@@ -63,40 +61,61 @@ export const LensTransfer = ({
     }
 
     try {
-      await writeContractAsyncProfile({
-        abi: [
-          ...erc721Abi,
-          {
-            constant: false,
-            inputs: [
-              {
-                name: "_from",
-                type: "address",
-              },
-              {
-                name: "_to",
-                type: "address",
-              },
-              {
-                name: "_tokenId",
-                type: "uint256",
-              },
-            ],
-            name: "transferFromKeepingDelegates",
-            outputs: [],
-            payable: false,
-            stateMutability: "nonpayable",
-            type: "function",
+      await writeContractAsyncProfile(
+        {
+          abi: [
+            ...erc721Abi,
+            {
+              constant: false,
+              inputs: [
+                {
+                  name: "_from",
+                  type: "address",
+                },
+                {
+                  name: "_to",
+                  type: "address",
+                },
+                {
+                  name: "_tokenId",
+                  type: "uint256",
+                },
+              ],
+              name: "transferFromKeepingDelegates",
+              outputs: [],
+              payable: false,
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+          ],
+          address: process.env
+            .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+          functionName: "transferFromKeepingDelegates",
+          args: [
+            address!,
+            rawTokenAddress as `0x${string}`,
+            profile.id as unknown as bigint,
+          ],
+        },
+        {
+          onSuccess: (result) => {
+            toast({
+              title: "Success",
+              description: "Transaction successful!",
+              action: (
+                <ToastAction
+                  onClick={() => {
+                    window.open(`https://polyscan.com/tx/${result}`, "_blank");
+                  }}
+                  altText="View Transaction"
+                >
+                  View transaction
+                </ToastAction>
+              ),
+            });
           },
-        ],
-        address: process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-        functionName: "transferFromKeepingDelegates",
-        args: [
-          address!,
-          rawTokenAddress as `0x${string}`,
-          profile.id as unknown as bigint,
-        ],
-      });
+        },
+      );
     } catch (error) {
       toast({
         title: "Error",
@@ -116,16 +135,40 @@ export const LensTransfer = ({
     }
 
     try {
-      await writeContractAsyncHandle({
-        abi: erc721Abi,
-        address: process.env.NEXT_PUBLIC_LENS_HANDLE_CONTRACT as `0x${string}`,
-        functionName: "safeTransferFrom",
-        args: [
-          address!,
-          rawTokenAddress as `0x${string}`,
-          handleId as unknown as bigint,
-        ],
-      });
+      await writeContractAsyncHandle(
+        {
+          abi: erc721Abi,
+          address: process.env
+            .NEXT_PUBLIC_LENS_HANDLE_CONTRACT as `0x${string}`,
+          functionName: "safeTransferFrom",
+          args: [
+            address!,
+            rawTokenAddress as `0x${string}`,
+            handleId as unknown as bigint,
+          ],
+        },
+        {
+          onSuccess: (result) => {
+            toast({
+              title: "View Transaction",
+              description: "View the transaction on the blockchain explorer",
+              action: (
+                <ToastAction
+                  altText="View Transaction"
+                  onClick={() => {
+                    window.open(
+                      `https://polyscan.com/tx/${result as string}`,
+                      "_blank",
+                    );
+                  }}
+                >
+                  View Transaction
+                </ToastAction>
+              ),
+            });
+          },
+        },
+      );
     } catch (error) {
       toast({
         title: "Error",
@@ -137,41 +180,6 @@ export const LensTransfer = ({
   useEffect(() => {
     setHandleId(profile.handle?.id ?? null);
   }, [profile.handle?.id]);
-
-  useEffect(() => {
-    if (hashHandle && isSuccessHandle) {
-      toast({
-        title: "View Transaction",
-        description: "Transaction successful!",
-        action: (
-          <ToastAction
-            altText="View Transaction"
-            onClick={() => {
-              window.open(`https://polyscan.com/tx/${hashHandle}`, "_blank");
-            }}
-          >
-            View Transaction
-          </ToastAction>
-        ),
-      });
-    } else if (hashProfile && isSuccessProfile) {
-      toast({
-        title: "Success",
-        description: "Transaction successful!",
-        action: (
-          <ToastAction
-            onClick={() => {
-              window.open(`https://polyscan.com/tx/${hashProfile}`, "_blank");
-            }}
-            altText="View Transaction"
-          >
-            View transaction
-          </ToastAction>
-        ),
-      });
-    }
-    [hashProfile, hashHandle];
-  });
 
   // Handle input change for recipient address
   const handleToAdressInput = (_to: string) => {
@@ -266,7 +274,7 @@ export const LensTransfer = ({
       ) : (
         <Button
           disabled={isPendingProfile}
-          onClick={() => handleTransferOwnership()}
+          onClick={async () => handleTransferOwnership()}
           size="sm"
         >
           Transfer Profile

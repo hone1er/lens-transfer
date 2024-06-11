@@ -21,7 +21,10 @@ import {
 import { Button } from "../ui/button";
 import Cooldown from "./Cooldown";
 import { LensTransfer } from "./LensTransfer";
-
+export enum TransferSelection {
+  Profile,
+  Handle,
+}
 export function LensApp() {
   const { address } = useAccount();
   const { data: profiles } = useProfiles({
@@ -29,6 +32,8 @@ export function LensApp() {
       ownedBy: [address as string],
     },
   });
+  const [transferSelection, setTransferSelection] =
+    React.useState<TransferSelection>(TransferSelection.Handle);
 
   const { execute: executeLogout } = useLogout();
   const { open } = useWeb3Modal();
@@ -134,9 +139,10 @@ export function LensApp() {
           </CardFooter>
         </Card>
         <div className="flex flex-col gap-4">
-          {session?.type === SessionType.WithProfile && (
-            <DisableGuardian isDisabled={profiles?.length === 0} />
-          )}
+          {session?.type === SessionType.WithProfile &&
+            transferSelection === TransferSelection.Profile && (
+              <DisableGuardian isDisabled={profiles?.length === 0} />
+            )}
 
           {session?.type === SessionType.WithProfile &&
           session.profile.id === sessionProfile?.id &&
@@ -144,6 +150,10 @@ export function LensApp() {
             <div className="flex flex-row items-center justify-between">
               <Cooldown endsOn={session?.profile?.guardian?.cooldownEndsOn} />
               <LensTransfer
+                setTransferSelection={(selection) =>
+                  setTransferSelection(selection)
+                }
+                transferSelection={transferSelection}
                 disabled={profiles?.length === 0}
                 profile={sessionProfile}
               />
