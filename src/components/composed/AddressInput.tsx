@@ -6,17 +6,14 @@ import useEnsProfile from "@/hooks/useEnsProfile";
 import truncateAddress from "@/utils/truncateAddress";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {
-  type Profile,
-  SessionType,
-  useSession,
-} from "@lens-protocol/react-web";
+import { type Profile, useSession } from "@lens-protocol/react-web";
 import {
   useAccount,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useToast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
 
 interface AddressInputProps extends React.HTMLProps<HTMLInputElement> {
   disabled?: boolean;
@@ -36,126 +33,123 @@ export const AddressInput = ({
   const [handleId, setHandleId] = useState<string | null>(null);
 
   const { address } = useAccount();
-  const { data: session } = useSession();
   const { toast } = useToast();
-  const [profileTxHash, setProfileTxHash] = useState<string | null>(null);
-  const [handleTxHash, setHandleTxHash] = useState<string | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const profileTxReceipt = useWaitForTransactionReceipt({
-    hash: profileTxHash as `0x${string}`,
-  });
-  const handleTxReceipt = useWaitForTransactionReceipt({
-    hash: handleTxHash as `0x${string}`,
-  });
-  const [writingContract, setWritingContract] = useState<boolean>(false);
-  const { writeContractAsync } = useWriteContract();
+  const {
+    writeContractAsync: writeContractAsyncProfile,
+    isPending: isPendingProfile,
+    data: hashProfile,
+    isSuccess: isSuccessProfile,
+  } = useWriteContract();
+  const {
+    writeContractAsync: writeContractAsyncHandle,
+    isPending: isPendingHandle,
+    data: hashHandle,
+    isSuccess: isSuccessHandle,
+  } = useWriteContract();
 
   const handleTransferOwnership = async () => {
-    setWritingContract(true);
     if (!isValidToAddress) {
       toast({
         title: "Invalid Address",
         description: "Please enter a valid address",
       });
-      setWritingContract(false);
+
       return;
     }
 
     try {
-      await writeContractAsync(
-        {
-          abi: erc721Abi,
-          address: process.env
-            .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-          functionName: "safeTransferFrom",
-          args: [
-            address!,
-            rawTokenAddress as `0x${string}`,
-            profile.id as unknown as bigint,
-          ],
-        },
-        {
-          onSettled: (result) => {
-            setProfileTxHash(result as string);
-          },
-        },
-      );
+      await writeContractAsyncProfile({
+        abi: erc721Abi,
+        address: process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+        functionName: "safeTransferFrom",
+        args: [
+          address!,
+          rawTokenAddress as `0x${string}`,
+          profile.id as unknown as bigint,
+        ],
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: (error as Error)?.message ?? "",
       });
-    } finally {
-      setWritingContract(false);
     }
   };
 
   const handleTransferHandleOwnership = async () => {
-    setWritingContract(true);
     if (!isValidToAddress) {
       toast({
         title: "Invalid Address",
         description: "Please enter a valid address",
       });
-      setWritingContract(false);
+
       return;
     }
 
     try {
-      await writeContractAsync(
-        {
-          abi: erc721Abi,
-          address: process.env
-            .NEXT_PUBLIC_LENS_HANDLE_CONTRACT as `0x${string}`,
-          functionName: "safeTransferFrom",
-          args: [
-            address!,
-            rawTokenAddress as `0x${string}`,
-            profile.id as unknown as bigint,
-          ],
-        },
-        {
-          onSuccess: (result) => {
-            setHandleTxHash(result as string);
-          },
-        },
-      );
+      await writeContractAsyncHandle({
+        abi: erc721Abi,
+        address: process.env.NEXT_PUBLIC_LENS_HANDLE_CONTRACT as `0x${string}`,
+        functionName: "safeTransferFrom",
+        args: [
+          address!,
+          rawTokenAddress as `0x${string}`,
+          handleId as unknown as bigint,
+        ],
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: (error as Error)?.message ?? "",
       });
-    } finally {
-      setWritingContract(false);
     }
   };
 
   useEffect(() => {
-    if (profileTxReceipt?.status === "success") {
-      toast({
-        title: "Profile Ownership Transferred",
-        description: "Ownership has been transferred successfully",
-      });
-    }
-  }, [profileTxReceipt, toast]);
+    setHandleId(profile.handle?.id ?? null);
+  }, [profile.handle?.id]);
 
   useEffect(() => {
-    if (handleTxReceipt?.status === "success") {
+    if (hashHandle) {
       toast({
-        title: "Handle Ownership Transferred",
-        description: "Ownership has been transferred successfully",
+        title: "Success",
+        description: "Transaction successful!",
+        action: (
+          <ToastAction
+            altText="View Transaction"
+            onClick={() => {
+              window.open(`https://polyscan.com/tx/${hashHandle}`, "_blank");
+            }}
+          >
+            View Transaction
+          </ToastAction>
+        ),
+      });
+    } else if (hashProfile) {
+      toast({
+        title: "Success",
+        description: "Transaction successful!",
+        action: (
+          <ToastAction
+            onClick={() => {
+              window.open(`https://polyscan.com/tx/${hashProfile}`, "_blank");
+            }}
+            altText="View Transaction"
+          >
+            View transaction
+          </ToastAction>
+        ),
       });
     }
-  }, [handleTxReceipt, toast]);
+    [hashProfile, hashHandle];
+  });
 
   // Handle input change for recipient address
   const handleToAdressInput = (_to: string) => {
     const isValid = isAddress(_to);
     setIsValidToAddress(isValid);
-
     // Update raw token address and notify parent component
-
     setRawTokenAddress(_to);
   };
 
@@ -216,9 +210,9 @@ export const AddressInput = ({
           <span>{truncateAddress(ensAddy ?? "")}</span>
         </button>
       </div>
-      {profileTxReceipt.status === "success" ? (
+      {isSuccessProfile ? (
         <Button
-          disabled={writingContract}
+          disabled={isPendingHandle}
           onClick={() => handleTransferHandleOwnership()}
           size="sm"
         >
@@ -226,7 +220,7 @@ export const AddressInput = ({
         </Button>
       ) : (
         <Button
-          disabled={writingContract}
+          disabled={isPendingProfile}
           onClick={() => handleTransferOwnership()}
           size="sm"
         >
