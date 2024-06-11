@@ -10,10 +10,15 @@ import { type Profile } from "@lens-protocol/react-web";
 import { useAccount, useWriteContract } from "wagmi";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
-
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 interface LensTransferProps extends React.HTMLProps<HTMLInputElement> {
   disabled?: boolean;
   profile: Profile;
+}
+enum TransferSelection {
+  Profile,
+  Handle,
 }
 
 export const LensTransfer = ({
@@ -25,6 +30,9 @@ export const LensTransfer = ({
   const { ensAddress: ensAddy, ensAvatar } = useEnsProfile({
     ensName: rawTokenAddress,
   });
+  const [transferSelection, setTransferSelection] = useState<TransferSelection>(
+    TransferSelection.Profile,
+  );
 
   const [handleId, setHandleId] = useState<string | null>(null);
 
@@ -56,9 +64,33 @@ export const LensTransfer = ({
 
     try {
       await writeContractAsyncProfile({
-        abi: erc721Abi,
+        abi: [
+          ...erc721Abi,
+          {
+            constant: false,
+            inputs: [
+              {
+                name: "_from",
+                type: "address",
+              },
+              {
+                name: "_to",
+                type: "address",
+              },
+              {
+                name: "_tokenId",
+                type: "uint256",
+              },
+            ],
+            name: "transferFromKeepingDelegates",
+            outputs: [],
+            payable: false,
+            stateMutability: "nonpayable",
+            type: "function",
+          },
+        ],
         address: process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-        functionName: "safeTransferFrom",
+        functionName: "transferFromKeepingDelegates",
         args: [
           address!,
           rawTokenAddress as `0x${string}`,
@@ -206,7 +238,24 @@ export const LensTransfer = ({
           <span>{truncateAddress(ensAddy ?? "")}</span>
         </button>
       </div>
-      {isSuccessProfile ? (
+      <div className="flex flex-row gap-2">
+        {/* toggle */}
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="airplane-mode"
+            checked={transferSelection === TransferSelection.Profile}
+            onCheckedChange={() =>
+              setTransferSelection(
+                transferSelection === TransferSelection.Handle
+                  ? TransferSelection.Profile
+                  : TransferSelection.Handle,
+              )
+            }
+          />
+          <Label htmlFor="transfer-lens">Transfer Profile</Label>
+        </div>
+      </div>
+      {isSuccessProfile || transferSelection === TransferSelection.Handle ? (
         <Button
           disabled={isPendingHandle}
           onClick={() => handleTransferHandleOwnership()}
