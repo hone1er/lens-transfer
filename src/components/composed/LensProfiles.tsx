@@ -13,7 +13,7 @@ import { useAccount } from "wagmi";
 import Image from "next/image";
 import LensProfileLoginButton from "./LensLogin";
 
-export function LensHandles() {
+export function LensProfiles() {
   const { address } = useAccount();
   const { data: session, loading } = useSession();
 

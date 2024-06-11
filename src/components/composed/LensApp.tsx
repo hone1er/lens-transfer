@@ -1,7 +1,7 @@
 "use client";
-import { AddressInput } from "./AddressInput";
+
 import React, { useEffect } from "react";
-import { LensHandles } from "./LensHandles";
+import { LensProfiles } from "./LensProfiles";
 import DisableGuardian from "./DisableGuardian";
 import {
   SessionType,
@@ -10,7 +10,6 @@ import {
   useSession,
 } from "@lens-protocol/react-web";
 import { useAccount, useDisconnect } from "wagmi";
-
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import {
   Card,
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import Cooldown from "./Cooldown";
+import { LensTransfer } from "./LensTransfer";
 
 export function LensApp() {
   const { address } = useAccount();
@@ -143,13 +143,13 @@ export function LensApp() {
           session?.profile?.guardian?.protected === false ? (
             <div className="flex flex-row items-center justify-between">
               <Cooldown endsOn={session?.profile?.guardian?.cooldownEndsOn} />
-              <AddressInput
+              <LensTransfer
                 disabled={profiles?.length === 0}
                 profile={sessionProfile}
               />
             </div>
           ) : null}
-          {profiles && profiles?.length > 0 ? <LensHandles /> : null}
+          {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
         </div>
       </div>
     );

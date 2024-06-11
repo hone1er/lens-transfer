@@ -6,24 +6,20 @@ import useEnsProfile from "@/hooks/useEnsProfile";
 import truncateAddress from "@/utils/truncateAddress";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { type Profile, useSession } from "@lens-protocol/react-web";
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { type Profile } from "@lens-protocol/react-web";
+import { useAccount, useWriteContract } from "wagmi";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 
-interface AddressInputProps extends React.HTMLProps<HTMLInputElement> {
+interface LensTransferProps extends React.HTMLProps<HTMLInputElement> {
   disabled?: boolean;
   profile: Profile;
 }
 
-export const AddressInput = ({
+export const LensTransfer = ({
   disabled = false,
   profile,
-}: AddressInputProps) => {
+}: LensTransferProps) => {
   const [isValidToAddress, setIsValidToAddress] = useState<boolean>(false);
   const [rawTokenAddress, setRawTokenAddress] = useState<string>("");
   const { ensAddress: ensAddy, ensAvatar } = useEnsProfile({
@@ -111,9 +107,9 @@ export const AddressInput = ({
   }, [profile.handle?.id]);
 
   useEffect(() => {
-    if (hashHandle) {
+    if (hashHandle && isSuccessHandle) {
       toast({
-        title: "Success",
+        title: "View Transaction",
         description: "Transaction successful!",
         action: (
           <ToastAction
@@ -126,7 +122,7 @@ export const AddressInput = ({
           </ToastAction>
         ),
       });
-    } else if (hashProfile) {
+    } else if (hashProfile && isSuccessProfile) {
       toast({
         title: "Success",
         description: "Transaction successful!",
