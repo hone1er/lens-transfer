@@ -21,13 +21,13 @@ NEXT_PUBLIC_LENS_PROFILE_CONTRACT ="0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
 Then, install the dependencies defined in the package.json:
 
 ```bash
-npm install
+pnpm install
 ```
 
 And then, run the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
