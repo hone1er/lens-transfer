@@ -53,7 +53,7 @@ createWeb3Modal({
   enableOnramp: true,
 });
 
-export function Web3Provider({ initialState, session, children }: Props) {
+export function Web3Provider({ initialState, children }: Props) {
   return (
     <WagmiProvider initialState={initialState} config={wagmiConfig}>
       {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  */}

@@ -40,14 +40,12 @@ export const LensTransfer = ({
   const {
     writeContractAsync: writeContractAsyncProfile,
     isPending: isPendingProfile,
-    data: hashProfile,
+
     isSuccess: isSuccessProfile,
   } = useWriteContract();
   const {
     writeContractAsync: writeContractAsyncHandle,
     isPending: isPendingHandle,
-    data: hashHandle,
-    isSuccess: isSuccessHandle,
   } = useWriteContract();
 
   const handleTransferOwnership = async () => {

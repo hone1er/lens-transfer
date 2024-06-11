@@ -18,11 +18,11 @@ export default function LensProfileLoginButton({
 
   const { data: session } = useSession();
 
-  const { execute: executeLogin, loading: loadingLogin } = useLogin();
-  const { execute: executeLogout, loading: loadingLogout } = useLogout();
+  const { execute: executeLogin } = useLogin();
+  const { execute: executeLogout } = useLogout();
 
   async function handleLogin() {
-    const result = await executeLogin({
+    void executeLogin({
       address: address as string,
       profileId: `${selectedProfileId}` as ProfileId,
     });

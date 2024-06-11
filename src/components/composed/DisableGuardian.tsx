@@ -1,16 +1,15 @@
 "use client";
 import React from "react";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import { Button } from "../ui/button";
 import { SessionType, useSession } from "@lens-protocol/react-web";
+import { useToast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
 const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
   const { data: session } = useSession();
   const [loading, setLoading] = React.useState(false);
-  const { writeContractAsync } = useWriteContract();
-  const [hash, setHash] = React.useState<string | null>(null);
-  const result = useWaitForTransactionReceipt({
-    hash: hash as `0x${string}`,
-  });
+  const { writeContractAsync, isPending } = useWriteContract();
+  const { toast } = useToast();
   const handleWriteContract = async () => {
     setLoading(true);
     try {
@@ -32,7 +31,21 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
         },
         {
           onSettled: (result) => {
-            setHash(result as string);
+            toast({
+              title: "Guardian Disabled",
+              description:
+                "Your guardian has been disabled. You will have to wait 7 days for the cooldown period to end before you can transfer your profile.",
+              action: (
+                <ToastAction
+                  altText="View Transaction"
+                  onClick={() => {
+                    window.open(`https://polyscan.io/tx/${result}`, "_blank");
+                  }}
+                >
+                  View Transaction
+                </ToastAction>
+              ),
+            });
           },
         },
       );
@@ -48,7 +61,8 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
         (session?.type === SessionType.WithProfile &&
           !session?.profile.guardian?.protected &&
           session?.profile?.guardian !== null) ||
-        isDisabled
+        isDisabled ||
+        isPending
       }
       onClick={async () => {
         await handleWriteContract();
