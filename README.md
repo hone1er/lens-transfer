@@ -1,29 +1,113 @@
-# Create T3 App
+# Lens Transfer
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Lens Transfer is a simple web application that allows users to transfer their lens profile and handle NFTs to a different address. It is built using the T3 Stack, which includes Next.js, wagmi, viem, Tailwind CSS, and shadCN.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Sign in with your wallet
+- View lens profile and handle NFTs
+- Disable guardian and initiate 7 day cooldown
+- Transfer lens profile and handle NFTs to a different address
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Getting Started
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+First, add the contracts to your .env file:
+
+```bash
+NEXT_PUBLIC_LENS_HANDLE_CONTRACT ="0xe7E7EaD361f3AaCD73A61A9bD6C10cA17F38E945"
+NEXT_PUBLIC_LENS_PROFILE_CONTRACT ="0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
+```
+
+Then, install the dependencies defined in the package.json:
+
+```bash
+npm install
+```
+
+And then, run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Contribution Guide
+
+We welcome contributions to Lens Transfer! Here's how you can get involved:
+
+### Reporting Issues
+
+If you encounter any bugs or have suggestions for improvements, please open an issue on our GitHub repository. Provide as much detail as possible to help us understand and address the problem.
+
+### Making Changes
+
+1. **Fork the repository**: Click the "Fork" button at the top right of our GitHub repository page and create your own copy of the project.
+
+2. **Clone your fork**: Clone your forked repository to your local machine using:
+   ```bash
+   git clone https://github.com/your-username/lens-transfer.git
+   ```
+
+Create a new branch: Create a new branch for your changes with a descriptive name:
+
+```bash
+Copy code
+git checkout -b feature/your-feature-name
+```
+
+Make your changes: Implement your changes in the new branch. Ensure your code follows our coding standards and is well-documented.
+
+Update tests: If your changes affect existing functionality or add new features, please update or add tests accordingly.
+
+Commit your changes: Commit your changes with a clear and concise commit message:
+
+```bash
+Copy code
+git commit -m "Add feature: your-feature-name"
+```
+
+Push to your fork: Push your changes to your forked repository:
+
+```bash
+Copy code
+git push origin feature/your-feature-name
+```
+
+Open a pull request: Navigate to the original repository and open a pull request from your new branch. Provide a detailed description of your changes and any relevant information.
+
+## Code Review Process
+
+Your pull request will be reviewed by one of our maintainers. They may request changes or provide feedback. Please be responsive to their comments and make the necessary updates.
+
+## Style Guide
+
+Please adhere to the coding standards used in the project. This includes following the structure and conventions of the existing codebase. Consistent formatting, meaningful variable names, and comprehensive comments are essential.
+
+## Documentation
+
+Ensure that any new features or significant changes are well-documented. Update the README.md file or other relevant documentation files as necessary.
 
 ## Learn More
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+lens - [Documentation](https://lens.xyz/docs)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+ShadCN - [Documentation](https://ui.shadcn.com/docs/)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Viem - [Documentation](https://viem.sh/)
 
-## How do I deploy this?
+Wagmi - [Documentation](https://wagmi.sh)
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Next.js - [Documentation](https://nextjs.org/docs)
+
+Tailwind CSS - [Documentation](https://tailwindcss.com/docs)
+
+## License
+
+Copyright 2024 Lens Transfer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
