@@ -48,8 +48,8 @@ export const LensTransfer = ({
   } = useWriteContract();
 
   useEffect(() => {
-    setHandleId(profile.handle?.id ?? null);
-  }, [profile.handle?.id]);
+    setHandleId(profile?.handle?.id ?? null);
+  }, [profile?.handle?.id]);
 
   const handleTransferOwnership = async () => {
     if (!isValidToAddress) {

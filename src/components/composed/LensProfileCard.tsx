@@ -13,6 +13,10 @@ export default function LensProfileCard({
   readonly profile: Profile;
   readonly session: Session | undefined;
 }): React.JSX.Element {
+  const imgSrc =
+    profile.metadata?.picture?.__typename === "ImageSet"
+      ? profile.metadata.picture.optimized?.uri ?? ""
+      : profile.metadata?.picture?.image.optimized?.uri ?? "";
   return (
     <div
       key={profile.id}
@@ -20,16 +24,14 @@ export default function LensProfileCard({
     >
       <div className="flex items-center">
         <div className="relative flex h-16 w-16 items-center">
-          <Image
-            className="h-12 w-12 rounded-full"
-            src={
-              profile.metadata?.picture?.__typename === "ImageSet"
-                ? profile.metadata.picture.optimized?.uri ?? ""
-                : profile.metadata?.picture?.image.optimized?.uri ?? ""
-            }
-            alt=""
-            fill
-          />
+          {imgSrc ? (
+            <Image
+              className="h-12 w-12 rounded-full"
+              src={imgSrc}
+              alt=""
+              fill
+            />
+          ) : null}
         </div>{" "}
         <div className="ml-2">
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">

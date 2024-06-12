@@ -30,7 +30,13 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
           functionName: "DANGER__disableTokenGuardian",
         },
         {
-          onSettled: (result) => {
+          onError: (error) => {
+            toast({
+              title: "Error",
+              description: error.message,
+            });
+          },
+          onSuccess: (result) => {
             toast({
               title: "Guardian Disabled",
               description:

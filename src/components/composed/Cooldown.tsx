@@ -29,20 +29,37 @@ export default function Cooldown({
       : 100;
   return (
     <Card className="shadow-md">
-      <CardHeader className="pb-2">
-        <CardDescription>Cooldown ends in</CardDescription>
-        <CardTitle className="text-4xl">
-          {daysRemaining >= 0 ? daysRemaining : 0} days
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-xs text-muted-foreground">
-          {7 - daysRemaining <= 7 ? 7 - daysRemaining : 7}/7 day(s)
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Progress value={percentComplete} aria-label="12% increase" />
-      </CardFooter>
+      {endsOn ? (
+        <>
+          <CardHeader className="pb-2">
+            <CardDescription>Cooldown ends in</CardDescription>
+            <CardTitle className="text-4xl">
+              {daysRemaining >= 0 ? daysRemaining : 0} days
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs text-muted-foreground">
+              {7 - daysRemaining <= 7 ? 7 - daysRemaining : 7}/7 day(s)
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Progress value={percentComplete} aria-label="12% increase" />
+          </CardFooter>
+        </>
+      ) : (
+        <>
+          <CardHeader className="pb-2">
+            <CardDescription>Start the cooldown</CardDescription>
+            <CardTitle className="text-4xl">n/a</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs text-muted-foreground">0/7 day(s)</div>
+          </CardContent>
+          <CardFooter>
+            <Progress value={percentComplete} aria-label="12% increase" />
+          </CardFooter>
+        </>
+      )}
     </Card>
   );
 }

@@ -40,6 +40,7 @@ export function LensApp() {
 
   const { disconnect } = useDisconnect();
   const { data: session, loading } = useSession();
+  console.log("🚀 ~ LensApp ~ session:", session);
 
   const sessionProfile = profiles?.find(
     (profile) =>
@@ -47,6 +48,7 @@ export function LensApp() {
       profile.id === session?.profile?.id,
   );
 
+  console.log("🚀 ~ LensApp ~ sessionProfile:", sessionProfile);
   useEffect(() => {
     async function checkStatus() {
       if (
@@ -139,23 +141,29 @@ export function LensApp() {
           </CardFooter>
         </Card>
         <div className="flex flex-col gap-4">
-          {session?.type === SessionType.WithProfile &&
-            transferSelection === TransferSelection.Profile && (
-              <DisableGuardian isDisabled={profiles?.length === 0} />
-            )}
+          {(session?.type === SessionType.WithProfile &&
+            transferSelection === TransferSelection.Profile) ||
+            (session?.type === SessionType.WithProfile &&
+              session?.profile?.guardian === null && (
+                <DisableGuardian isDisabled={profiles?.length === 0} />
+              ))}
 
-          {session?.type === SessionType.WithProfile &&
-          session.profile.id === sessionProfile?.id &&
-          session?.profile?.guardian?.protected === false ? (
+          {(session?.type === SessionType.WithProfile &&
+            session.profile.id === sessionProfile?.id &&
+            session?.profile?.guardian?.protected === false) ||
+          (session?.type === SessionType.WithProfile &&
+            session?.profile?.guardian === null) ? (
             <div className="flex flex-row items-center justify-between">
-              <Cooldown endsOn={session?.profile?.guardian?.cooldownEndsOn} />
+              <Cooldown
+                endsOn={session?.profile?.guardian?.cooldownEndsOn ?? null}
+              />
               <LensTransfer
                 setTransferSelection={(selection) =>
                   setTransferSelection(selection)
                 }
                 transferSelection={transferSelection}
                 disabled={profiles?.length === 0}
-                profile={sessionProfile}
+                profile={sessionProfile!}
               />
             </div>
           ) : null}
