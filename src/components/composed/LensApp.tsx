@@ -159,7 +159,7 @@ export function LensApp() {
               />
             </div>
           ) : null}
-          <Delegation session={session} />
+          {session?.authenticated ? <Delegation session={session} /> : null}
           {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
         </div>
       </div>
