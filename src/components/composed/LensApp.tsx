@@ -1,5 +1,5 @@
 "use client";
-
+import { Delegation } from "./Delegation";
 import React, { useEffect } from "react";
 import { LensProfiles } from "./LensProfiles";
 import DisableGuardian from "./DisableGuardian";
@@ -159,6 +159,7 @@ export function LensApp() {
               />
             </div>
           ) : null}
+          <Delegation session={session} />
           {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
         </div>
       </div>

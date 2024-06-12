@@ -1,18 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { erc721Abi, isAddress } from "viem";
-import Image from "next/image";
-import useEnsProfile from "@/hooks/useEnsProfile";
-import truncateAddress from "@/utils/truncateAddress";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { type Profile } from "@lens-protocol/react-web";
+import { erc721Abi } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 import { useToast } from "../ui/use-toast";
-import { ToastAction } from "../ui/toast";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import EnsInputField from "./EnsInputField";
+import { useEns } from "@/hooks/useEns";
+import { type Profile } from "@lens-protocol/react-web";
 import { TransferSelection } from "./LensApp";
+import { ToastAction } from "../ui/toast";
+
 interface LensTransferProps extends React.HTMLProps<HTMLInputElement> {
   disabled?: boolean;
   profile: Profile;
@@ -26,27 +25,31 @@ export const LensTransfer = ({
   transferSelection,
   setTransferSelection,
 }: LensTransferProps) => {
-  const [isValidToAddress, setIsValidToAddress] = useState<boolean>(false);
-  const [rawTokenAddress, setRawTokenAddress] = useState<string>("");
-  const { ensAddress: ensAddy, ensAvatar } = useEnsProfile({
-    ensName: rawTokenAddress,
-  });
-
+  const {
+    rawTokenAddress,
+    isValidToAddress,
+    ensAddy,
+    ensAvatar,
+    handleToAddressInput,
+  } = useEns();
   const [handleId, setHandleId] = useState<string | null>(null);
-
   const { address } = useAccount();
   const { toast } = useToast();
 
   const {
     writeContractAsync: writeContractAsyncProfile,
     isPending: isPendingProfile,
-
     isSuccess: isSuccessProfile,
   } = useWriteContract();
+
   const {
     writeContractAsync: writeContractAsyncHandle,
     isPending: isPendingHandle,
   } = useWriteContract();
+
+  useEffect(() => {
+    setHandleId(profile.handle?.id ?? null);
+  }, [profile.handle?.id]);
 
   const handleTransferOwnership = async () => {
     if (!isValidToAddress) {
@@ -54,7 +57,6 @@ export const LensTransfer = ({
         title: "Invalid Address",
         description: "Please enter a valid address",
       });
-
       return;
     }
 
@@ -66,18 +68,9 @@ export const LensTransfer = ({
             {
               constant: false,
               inputs: [
-                {
-                  name: "_from",
-                  type: "address",
-                },
-                {
-                  name: "_to",
-                  type: "address",
-                },
-                {
-                  name: "_tokenId",
-                  type: "uint256",
-                },
+                { name: "_from", type: "address" },
+                { name: "_to", type: "address" },
+                { name: "_tokenId", type: "uint256" },
               ],
               name: "transferFromKeepingDelegates",
               outputs: [],
@@ -128,7 +121,6 @@ export const LensTransfer = ({
         title: "Invalid Address",
         description: "Please enter a valid address",
       });
-
       return;
     }
 
@@ -175,77 +167,20 @@ export const LensTransfer = ({
     }
   };
 
-  useEffect(() => {
-    setHandleId(profile.handle?.id ?? null);
-  }, [profile.handle?.id]);
-
-  // Handle input change for recipient address
-  const handleToAdressInput = (_to: string) => {
-    const isValid = isAddress(_to);
-    setIsValidToAddress(isValid);
-    // Update raw token address and notify parent component
-    setRawTokenAddress(_to);
-  };
-
   return (
-    <div className="flex h-full w-full max-w-96 flex-col gap-2 rounded-lg border   p-7 shadow-md">
+    <div className="flex h-full w-full max-w-96 flex-col gap-2 rounded-lg border p-7 shadow-md">
       <label className="text-lg font-semibold text-gray-800">
         Transfer Ownership to:
       </label>
-      <div
-        className={`duration-400 relative flex min-w-80 flex-col gap-2 transition-all ${ensAddy ? "h-[106px] rounded-b-[8px]" : "h-[48px] rounded-b-[48px]"}`}
-      >
-        <Input
-          type="text"
-          placeholder="0x..."
-          disabled={disabled}
-          className={`relative z-40 min-h-10 w-full bg-white ${rawTokenAddress.length > 0 && isValidToAddress ? "border-green-500" : rawTokenAddress.length > 0 && !isValidToAddress ? "border-red-500" : "border-auto"} rounded-t-[8px]  px-4 py-2 transition-all duration-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
-          value={rawTokenAddress}
-          name="address"
-          onChange={(e) => handleToAdressInput(e.target.value)}
-        />
-
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setRawTokenAddress(ensAddy ?? "");
-            setIsValidToAddress(true);
-          }}
-          className={`text-neutral-content relative bottom-3 z-10 flex w-full min-w-[140px] max-w-80 flex-row items-center justify-between rounded-b-[8px]  bg-slate-100 px-4 py-2 transition-all duration-500 hover:cursor-pointer md:px-4 ${
-            ensAddy
-              ? "max-w-full translate-y-0 opacity-100"
-              : "pointer-events-none max-w-0 -translate-y-12 opacity-0"
-          }`}
-        >
-          {ensAvatar ? (
-            <div className="avatar ">
-              <div className="w-8 rounded-full bg-slate-800">
-                <Image
-                  width={320}
-                  height={320}
-                  content="responsive"
-                  src={ensAvatar ?? ""}
-                  alt="avatar"
-                  placeholder="blur"
-                  blurDataURL="/assets/icons/ethereum.png"
-                  className={`${ensAvatar ? "block" : "hidden"}  relative h-8 min-h-8 w-8 min-w-8 rounded-full object-cover`}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content w-8 items-start rounded-full">
-                <span className="relative bottom-0 text-lg">
-                  {rawTokenAddress[0]}
-                </span>
-              </div>
-            </div>
-          )}
-          <span>{truncateAddress(ensAddy ?? "")}</span>
-        </button>
-      </div>
+      <EnsInputField
+        disabled={disabled}
+        rawTokenAddress={rawTokenAddress}
+        isValidToAddress={isValidToAddress}
+        ensAddy={ensAddy as string}
+        ensAvatar={ensAvatar!}
+        onChange={handleToAddressInput}
+      />
       <div className="flex flex-row gap-2">
-        {/* toggle */}
         <div className="flex items-center space-x-2">
           <Switch
             id="airplane-mode"
@@ -264,7 +199,7 @@ export const LensTransfer = ({
       {isSuccessProfile || transferSelection === TransferSelection.Handle ? (
         <Button
           disabled={isPendingHandle}
-          onClick={() => handleTransferHandleOwnership()}
+          onClick={handleTransferHandleOwnership}
           size="sm"
         >
           Transfer Handle
@@ -272,7 +207,7 @@ export const LensTransfer = ({
       ) : (
         <Button
           disabled={isPendingProfile}
-          onClick={async () => handleTransferOwnership()}
+          onClick={handleTransferOwnership}
           size="sm"
         >
           Transfer Profile
