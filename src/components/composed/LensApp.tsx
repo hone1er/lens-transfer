@@ -164,8 +164,8 @@ export function LensApp() {
           session?.type === SessionType.WithProfile &&
           session.profile.guardian === null ? (
             <p className="text-gray-500 dark:text-gray-400">
-              note: your guardian is was returned as NULL by the Lens API.
-              Logout and login again to interact with your guardian
+              note: your guardian was returned as &quot;NULL&quot; by the Lens
+              API. Logout and login again to interact with your guardian.
             </p>
           ) : null}
 
