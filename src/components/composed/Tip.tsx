@@ -89,7 +89,7 @@ export function TipDrawer() {
               <br />
               This tool was created by
               <a
-                href="https://hey.xyz/hone1er"
+                href="https://hey.xyz/u/hone1er"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500"
@@ -97,7 +97,7 @@ export function TipDrawer() {
                 {" "}
                 @hone1er
               </a>
-              ! Follow on X for more updates. 🚀
+              ! Follow on hey.xyz or any Lens app for more updates. 🚀
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">

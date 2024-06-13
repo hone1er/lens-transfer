@@ -80,7 +80,7 @@ export default function Navbar() {
                 Follow Settings
               </Button>
             </Link>
-            <Link href="/lens-tools/about">
+            <Link href="/about">
               <Button
                 variant="ghost"
                 className="block w-full md:inline md:w-auto"

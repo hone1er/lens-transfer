@@ -2,16 +2,50 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { useFollow, useProfile } from "@lens-protocol/react-web";
+import {
+  SessionType,
+  TriStateValue,
+  useFollow,
+  useProfile,
+  useSession,
+} from "@lens-protocol/react-web";
+import { useToast } from "../ui/use-toast";
 export function LensProfileDisplay() {
+  const { toast } = useToast();
+  const { data: session } = useSession();
   const { data, loading } = useProfile({
     forHandle: "lens/hone1er",
   });
   const { execute } = useFollow();
   const handleFollow = async () => {
+    if (session?.authenticated && session.type === SessionType.WithProfile) {
+      if (session.profile.operations.canFollow === TriStateValue.No) {
+        toast({
+          title: "Error",
+          description: "You are not allowed to follow this user",
+        });
+        return;
+      }
+    }
     if (!data) return;
-    await execute({ profile: data });
+    const result = await execute({ profile: data });
+
+    if (result.isFailure()) {
+      toast({
+        title: "Error",
+        description: "Failed to follow user",
+      });
+      return;
+    }
+    toast({
+      title: "Success",
+      description: "User followed",
+    });
   };
+  const canFollow =
+    session?.authenticated &&
+    session.type === SessionType.WithProfile &&
+    session.profile.operations.canFollow;
   return (
     <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-950">
       <div className="flex items-center gap-4">
@@ -27,7 +61,7 @@ export function LensProfileDisplay() {
         </div>
         <Button
           onClick={() => handleFollow()}
-          disabled={loading}
+          disabled={loading || canFollow === TriStateValue.No}
           variant="outline"
           className="ml-auto"
         >
