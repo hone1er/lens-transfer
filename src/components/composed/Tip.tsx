@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { useSendTransaction } from "wagmi";
+import { useChainId, useSendTransaction } from "wagmi";
 import {
   Drawer,
   DrawerClose,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "../ui/input";
 import { parseEther } from "viem";
+import { mainnet, polygon } from "@lens-protocol/react-web";
 
 export function Tip() {
   return (
@@ -48,6 +49,7 @@ function PointerIcon({ ...props }) {
 
 export function TipDrawer() {
   const [amount, setAmount] = useState("");
+  const chainId = useChainId();
   const { sendTransaction } = useSendTransaction();
 
   const handleSend = async () => {
@@ -60,6 +62,10 @@ export function TipDrawer() {
       console.error(error);
     }
   };
+
+  const currency = useCallback(() => {
+    return chainId === polygon.chainId ? "MATIC" : "ETH";
+  }, [chainId]);
 
   return (
     <Drawer>
@@ -97,7 +103,7 @@ export function TipDrawer() {
           <div className="p-4 pb-0">
             <div className="mt-3">
               <Input
-                placeholder="Enter amount in Matic"
+                placeholder={`Amount in ${currency()} `}
                 value={amount}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setAmount(e.target.value)
