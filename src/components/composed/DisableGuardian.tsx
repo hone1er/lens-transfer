@@ -1,16 +1,35 @@
 "use client";
 import React from "react";
-import { useWriteContract } from "wagmi";
+import { useChainId, useConfig, useWriteContract } from "wagmi";
 import { Button } from "../ui/button";
-import { SessionType, useSession } from "@lens-protocol/react-web";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
+import { polygon } from "@lens-protocol/react-web";
+import { switchChain } from "@wagmi/core";
 const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
-  const { data: session } = useSession();
+  const chainId = useChainId();
+  const config = useConfig();
   const [loading, setLoading] = React.useState(false);
   const { writeContractAsync, isPending } = useWriteContract();
   const { toast } = useToast();
   const handleWriteContract = async () => {
+    if (chainId !== polygon.chainId) {
+      toast({
+        title: "Unsupported Network",
+        description: "Please switch to the Polygon network",
+        action: (
+          <ToastAction
+            onClick={async () =>
+              await switchChain(config, { chainId: polygon.chainId })
+            }
+            altText="Switch Network"
+          >
+            Switch to Polygon Network
+          </ToastAction>
+        ),
+      });
+      return;
+    }
     setLoading(true);
     try {
       await writeContractAsync(

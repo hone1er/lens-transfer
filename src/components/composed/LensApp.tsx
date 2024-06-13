@@ -41,7 +41,6 @@ export function LensApp() {
 
   const { disconnect } = useDisconnect();
   const { data: session, loading } = useSession();
-  console.log("🚀 ~ LensApp ~ session:", session);
 
   const sessionProfile = profiles?.find(
     (profile) =>
@@ -49,7 +48,6 @@ export function LensApp() {
       profile.id === session?.profile?.id,
   );
 
-  console.log("🚀 ~ LensApp ~ sessionProfile:", sessionProfile);
   useEffect(() => {
     async function checkStatus() {
       if (

@@ -5,6 +5,7 @@ import {
   type Session,
   useUpdateProfileManagers,
   type ProfileId,
+  polygon,
 } from "@lens-protocol/react-web";
 import React from "react";
 import { Label } from "../ui/label";
@@ -14,6 +15,9 @@ import { Button } from "../ui/button";
 import { TrashIcon } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import truncateAddress from "@/utils/truncateAddress";
+import { useChainId, useConfig } from "wagmi";
+import { ToastAction } from "../ui/toast";
+import { switchChain } from "@wagmi/core";
 
 export function Delegation({
   session,
@@ -28,10 +32,28 @@ export function Delegation({
     handleToAddressInput,
   } = useEns();
   const { toast } = useToast();
-
+  const chainId = useChainId();
+  const config = useConfig();
   const { execute, loading } = useUpdateProfileManagers();
 
   const add = async () => {
+    if (chainId !== polygon.chainId) {
+      toast({
+        title: "Unsupported Network",
+        description: "Please switch to the Polygon network",
+        action: (
+          <ToastAction
+            onClick={async () =>
+              await switchChain(config, { chainId: polygon.chainId })
+            }
+            altText="Switch Network"
+          >
+            Switch to Polygon Network
+          </ToastAction>
+        ),
+      });
+      return;
+    }
     if (!isValidToAddress) return;
     const result = await execute({
       add: [rawTokenAddress],
@@ -85,6 +107,8 @@ export function Delegation({
 }
 
 function ProfileManagers({ session }: { session: Session | undefined }) {
+  const chainId = useChainId();
+  const config = useConfig();
   const { toast } = useToast();
   const { data, error, loading } = useProfileManagers({
     for:
@@ -98,6 +122,23 @@ function ProfileManagers({ session }: { session: Session | undefined }) {
   >();
 
   const remove = async (address: string) => {
+    if (chainId !== polygon.chainId) {
+      toast({
+        title: "Unsupported Network",
+        description: "Please switch to the Polygon network",
+        action: (
+          <ToastAction
+            onClick={async () =>
+              await switchChain(config, { chainId: polygon.chainId })
+            }
+            altText="Switch Network"
+          >
+            Switch to Polygon Network
+          </ToastAction>
+        ),
+      });
+      return;
+    }
     setUpdatingAddress(address);
     try {
       const result = await execute({
