@@ -142,6 +142,8 @@ export function LensApp() {
             </p>
           </CardFooter>
         </Card>
+        {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
+
         <div className="flex w-full flex-col gap-4">
           {transferSelection === TransferSelection.Profile &&
           session?.type === SessionType.WithProfile ? (
@@ -165,11 +167,11 @@ export function LensApp() {
           session.profile.guardian === null ? (
             <p className="text-gray-500 dark:text-gray-400">
               note: your guardian is was returned as NULL by the Lens API.
-              Logout below and login again to interact with your guardian
+              Logout and login again to interact with your guardian
             </p>
           ) : null}
 
-          <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-2">
             {session?.authenticated ? (
               <LensTransfer
                 setTransferSelection={(selection) =>
@@ -193,7 +195,6 @@ export function LensApp() {
           </div>
 
           {session?.authenticated ? <Delegation session={session} /> : null}
-          {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
         </div>
       </div>
     );

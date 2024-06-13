@@ -34,12 +34,13 @@ export default function Cooldown({
           <CardHeader className="pb-2">
             <CardDescription>Cooldown ends in</CardDescription>
             <CardTitle className="text-4xl">
-              {daysRemaining >= 0 ? daysRemaining : 0} days
+              {daysRemaining >= 0 ? daysRemaining : 0}{" "}
+              {daysRemaining >= 1 ? "days" : "day"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              {7 - daysRemaining <= 7 ? 7 - daysRemaining : 7}/7 day(s)
+              {7 - daysRemaining <= 7 ? 7 - daysRemaining : 7}/7 days
             </div>
           </CardContent>
           <CardFooter>
