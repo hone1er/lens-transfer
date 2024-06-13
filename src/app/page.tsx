@@ -104,7 +104,7 @@ export default function Component() {
         </section>
       </main>
       <footer className="w-full bg-[#1e293b] p-6 md:py-12">
-        <div className="container grid max-w-7xl grid-cols-2 gap-8 text-sm text-gray-400 sm:grid-cols-3 md:grid-cols-5">
+        {/* <div className="container grid max-w-7xl grid-cols-2 gap-8 text-sm text-gray-400 sm:grid-cols-3 md:grid-cols-5">
           <div className="grid gap-1">
             <h3 className="font-semibold text-gray-200">Company</h3>
             <Link href="#" className="hover:text-gray-200" prefetch={false}>
@@ -177,7 +177,7 @@ export default function Component() {
               LinkedIn
             </Link>
           </div>
-        </div>
+        </div> */}
       </footer>
     </div>
   );
