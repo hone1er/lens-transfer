@@ -13,6 +13,7 @@ import EnsInputField from "./EnsInputField";
 import { Button } from "../ui/button";
 import { TrashIcon } from "lucide-react";
 import { useToast } from "../ui/use-toast";
+import truncateAddress from "@/utils/truncateAddress";
 
 export function Delegation({
   session,
@@ -53,7 +54,7 @@ export function Delegation({
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border p-6 shadow-md">
+    <div className="flex w-full max-w-96 flex-col gap-4 place-self-center rounded-lg border p-6 shadow-md md:max-w-full">
       {/* delegation section */}
       <h2 className="text-lg font-semibold">Profile Manager</h2>
       <Label className="text-md font-normal text-gray-800">
@@ -136,7 +137,8 @@ function ProfileManagers({ session }: { session: Session | undefined }) {
           <li key={address}>
             <div className="flex w-full justify-between">
               <p>
-                {address} - {isLensManager ? "Lens Profile Manager" : "Other"}
+                {truncateAddress(address)} -{" "}
+                {isLensManager ? "Lens Profile Manager" : "Other"}
               </p>
               <Button
                 disabled={updatingAddress === address}

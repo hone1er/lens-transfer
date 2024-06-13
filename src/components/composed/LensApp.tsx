@@ -21,6 +21,7 @@ import {
 import { Button } from "../ui/button";
 import Cooldown from "./Cooldown";
 import { LensTransfer } from "./LensTransfer";
+import EnableGuardian from "./EnableGuardian";
 export enum TransferSelection {
   Profile,
   Handle,
@@ -124,11 +125,12 @@ export function LensApp() {
               <li> 2. Wait 7 days for the cooldown period to end</li>
               <li> 3. Transfer ownership to the new address:</li>
               <ul className="space-y-2">
-                <li className="ml-6 text-sm">3a. Transfer profile NFT</li>
-                <li className="ml-6 text-sm">3b. Transfer Handle NFT</li>
                 <li className="ml-6 text-sm">
-                  3c. Re-link the handle NFT to the profile NFT
+                  3a. (optional) Add the wallet you want to use for Lens
+                  interactions as a profile manager
                 </li>
+                <li className="ml-6 text-sm">3b. Transfer Profile NFT</li>
+                <li className="ml-6 text-sm">3b. Transfer Handle NFT</li>
               </ul>
             </ol>
           </CardContent>
@@ -140,23 +142,35 @@ export function LensApp() {
             </p>
           </CardFooter>
         </Card>
-        <div className="flex flex-col gap-4">
-          {(session?.type === SessionType.WithProfile &&
-            transferSelection === TransferSelection.Profile) ||
-            (session?.type === SessionType.WithProfile &&
-              session?.profile?.guardian === null && (
-                <DisableGuardian isDisabled={profiles?.length === 0} />
-              ))}
-
-          {(session?.type === SessionType.WithProfile &&
-            session.profile.id === sessionProfile?.id &&
-            session?.profile?.guardian?.protected === false) ||
-          (session?.type === SessionType.WithProfile &&
-            session?.profile?.guardian === null) ? (
-            <div className="flex flex-row items-center justify-between">
-              <Cooldown
-                endsOn={session?.profile?.guardian?.cooldownEndsOn ?? null}
+        <div className="flex w-full flex-col gap-4">
+          {transferSelection === TransferSelection.Profile &&
+          session?.type === SessionType.WithProfile ? (
+            <div className="flex w-full flex-row gap-4">
+              <DisableGuardian
+                isDisabled={
+                  !session.profile.guardian?.protected ||
+                  session.profile.guardian === null
+                }
               />
+              <EnableGuardian
+                isDisabled={
+                  session.profile.guardian === null ||
+                  session.profile.guardian?.protected
+                }
+              />
+            </div>
+          ) : null}
+          {transferSelection === TransferSelection.Profile &&
+          session?.type === SessionType.WithProfile &&
+          session.profile.guardian === null ? (
+            <p className="text-gray-500 dark:text-gray-400">
+              note: your guardian is was returned as NULL by the Lens API.
+              Logout below and login again to interact with your guardian
+            </p>
+          ) : null}
+
+          <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
+            {session?.authenticated ? (
               <LensTransfer
                 setTransferSelection={(selection) =>
                   setTransferSelection(selection)
@@ -165,8 +179,19 @@ export function LensApp() {
                 disabled={profiles?.length === 0}
                 profile={sessionProfile!}
               />
-            </div>
-          ) : null}
+            ) : null}
+            {session?.type === SessionType.WithProfile &&
+            transferSelection === TransferSelection.Profile ? (
+              <Cooldown
+                endsOn={
+                  session?.profile?.guardian
+                    ? session.profile.guardian.cooldownEndsOn
+                    : null
+                }
+              />
+            ) : null}
+          </div>
+
           {session?.authenticated ? <Delegation session={session} /> : null}
           {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
         </div>

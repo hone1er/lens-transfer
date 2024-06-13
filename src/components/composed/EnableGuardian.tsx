@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { SessionType, useSession } from "@lens-protocol/react-web";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
-const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
+const EnableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
   const { data: session } = useSession();
   const [loading, setLoading] = React.useState(false);
   const { writeContractAsync, isPending } = useWriteContract();
@@ -19,7 +19,7 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
             {
               constant: false,
               inputs: [],
-              name: "DANGER__disableTokenGuardian",
+              name: "enableTokenGuardian",
               outputs: [],
               payable: false,
               stateMutability: "nonpayable",
@@ -27,7 +27,7 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
             },
           ],
           address: "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d",
-          functionName: "DANGER__disableTokenGuardian",
+          functionName: "enableTokenGuardian",
         },
         {
           onError: (error) => {
@@ -38,9 +38,9 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
           },
           onSuccess: (result) => {
             toast({
-              title: "Guardian Disabled",
+              title: "Guardian Enabled",
               description:
-                "Your guardian has been disabled. You will have to wait 7 days for the cooldown period to end before you can transfer your profile.",
+                "Your guardian has been enabled. Your profile is now protected and cannot be transferred.",
               action: (
                 <ToastAction
                   altText="View Transaction"
@@ -68,9 +68,9 @@ const DisableGuardian = ({ isDisabled = false }: { isDisabled?: boolean }) => {
         await handleWriteContract();
       }}
     >
-      Disable Guardian
+      Enable Guardian
     </Button>
   );
 };
 
-export default DisableGuardian;
+export default EnableGuardian;
