@@ -1,3 +1,4 @@
+import { Tip } from "./../components/composed/Tip";
 import { Inter as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ import "@/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { Web3Provider } from "@/context/web3";
 import { Toaster } from "@/components/ui/toaster";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Lens Transfer",
