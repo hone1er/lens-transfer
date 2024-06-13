@@ -27,7 +27,7 @@ export function LensProfiles() {
   if (profiles?.length && !profileObj) {
     content = (
       <>
-        <h2 className="text-lg font-semibold">Select a profile to transfer</h2>
+        <h2 className="text-lg font-semibold">Login to a profile</h2>
         {profiles?.map((profile) => (
           <LensProfileCard
             profile={profile}

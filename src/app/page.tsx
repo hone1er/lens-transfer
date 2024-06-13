@@ -22,12 +22,12 @@ export default function Component() {
                   <Link
                     href="/lens-tools/profile-manager"
                     className="inline-flex h-10 items-center justify-center rounded-md bg-[#8b5cf6] px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-[#7c3aed] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#6d28d9] disabled:pointer-events-none disabled:opacity-50 dark:bg-[#a78bfa] dark:text-[#1e293b] dark:hover:bg-[#9d7aff]"
-                    prefetch={false}
+                    prefetch={true}
                   >
                     Get Started
                   </Link>
                   <Link
-                    href="#"
+                    href="#learn-more"
                     className="inline-flex h-10 items-center justify-center rounded-md border border-[#e5e7eb] border-[#e5e7eb] bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-[#f3f4f6] hover:text-[#1f2937] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#6d28d9] disabled:pointer-events-none disabled:opacity-50 dark:border-[#374151] dark:border-[#374151] dark:bg-[#1e293b] dark:hover:bg-[#374151] dark:hover:text-[#f3f4f6] dark:focus-visible:ring-[#a78bfa]"
                     prefetch={false}
                   >
@@ -35,19 +35,22 @@ export default function Component() {
                   </Link>
                 </div>
               </div>
-              <img
+              {/* <img
                 src="/placeholder.svg"
                 width="550"
                 height="550"
                 alt="Hero"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
-              />
+              /> */}
             </div>
           </div>
         </section>
-        <section className="w-full bg-[#f3f4f6] py-12 dark:bg-[#1e293b] md:py-24 lg:py-32">
+        <section
+          id="learn-more"
+          className="w-full bg-[#f3f4f6] py-12 dark:bg-[#1e293b] md:py-24 lg:py-32"
+        >
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
+            <div className="grid gap-6 lg:grid-cols-4 lg:gap-8">
               <div className="flex flex-col items-start gap-4">
                 <MenuIcon className="h-8 w-8 text-[#8b5cf6]" />
                 <h3 className="text-xl font-bold">Manage Profiles</h3>
@@ -80,22 +83,22 @@ export default function Component() {
                   who can interact with your content.
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-4">
+              {/* <div className="flex flex-col items-start gap-4">
                 <ScanIcon className="h-8 w-8 text-[#8b5cf6]" />
                 <h3 className="text-xl font-bold">Analyze Performance</h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   Track key metrics and insights to optimize your Lens profiles
                   for maximum engagement.
                 </p>
-              </div>
-              <div className="flex flex-col items-start gap-4">
+              </div> */}
+              {/* <div className="flex flex-col items-start gap-4">
                 <BotIcon className="h-8 w-8 text-[#8b5cf6]" />
                 <h3 className="text-xl font-bold">Automate Updates</h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   Set up automated updates to ensure your Lens profiles are
                   always current and engaging.
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
