@@ -89,7 +89,7 @@ export function TipDrawer() {
               <br />
               This tool was created by
               <a
-                href="https://x.com/hone1er"
+                href="https://hey.xyz/hone1er"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500"

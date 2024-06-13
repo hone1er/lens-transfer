@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import EnsInputField from "./EnsInputField";
 import { useEns } from "@/hooks/useEns";
 import { polygon, type Profile } from "@lens-protocol/react-web";
-import { TransferSelection } from "./LensApp";
+import { TransferSelection } from "./LensProfileManager";
 import { ToastAction } from "../ui/toast";
 import { PERMISSIONLESS_CREATOR_ABI } from "@/abi/PermissionlessCreatorABI";
 import { switchChain } from "@wagmi/core";
