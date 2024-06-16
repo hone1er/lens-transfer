@@ -15,6 +15,9 @@ import {
   type Profile,
   TriStateValue,
   useFollow,
+  useBlockProfiles,
+  useBlockedProfiles,
+  useUnblockProfiles,
 } from "@lens-protocol/react-web";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -256,6 +259,7 @@ export function FollowSettingsManager() {
           </div>
         </div>
         <FollowersList followers={followers} />
+        {session?.authenticated ? <BlockedProfiles /> : null}
       </div>
     </div>
   );
@@ -263,9 +267,17 @@ export function FollowSettingsManager() {
 
 function FollowersList({ followers }: { followers: Profile[] | undefined }) {
   const { execute, loading, error } = useFollow();
+  const { execute: executeBlock, loading: blockLoading } = useBlockProfiles();
+  const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const handleFollow = async (follower: Profile) => {
     await execute({ profile: follower });
+  };
+
+  const handleBlock = async (follower: Profile) => {
+    setLoadingId(follower.id);
+    await executeBlock({ profiles: [follower] });
+    setLoadingId(null);
   };
   if (!followers) {
     return null;
@@ -304,8 +316,65 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
                   Follow
                 </Button>
               ) : null}
-              <Button size={"sm"} variant={"destructive"}>
-                Remove
+              <Button
+                onClick={async () => await handleBlock(follower)}
+                size={"sm"}
+                disabled={loadingId === follower.id}
+                variant={"destructive"}
+              >
+                Block
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function BlockedProfiles() {
+  const [loadingId, setLoadingId] = useState<ProfileId | null>(null);
+  const { execute: executeUnblock } = useUnblockProfiles();
+
+  const { data: blockedProfiles } = useBlockedProfiles();
+  const handleUnblock = async (profile: Profile) => {
+    setLoadingId(profile.id);
+    await executeUnblock({ profiles: [profile] });
+    setLoadingId(null);
+  };
+  if (!blockedProfiles) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-4 rounded-lg p-6 py-10 shadow-md">
+      <h2 className="mb-2 text-lg font-semibold">Blocked Profiles</h2>
+      <div className="space-y-4">
+        {blockedProfiles.map((profile) => {
+          const imgSrc =
+            profile.metadata?.picture?.__typename === "ImageSet"
+              ? profile.metadata.picture?.optimized?.uri
+              : profile.metadata?.picture?.image.optimized?.uri;
+          return (
+            <div key={profile.id} className="flex items-center space-x-4">
+              <div className="relative flex w-full items-center space-x-2">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={imgSrc} />
+                  <AvatarFallback>H1</AvatarFallback>
+                </Avatar>
+                <p>
+                  {profile.handle?.suggestedFormatted.localName ??
+                    profile?.handle?.localName ??
+                    ""}
+                </p>
+              </div>
+              <Button
+                onClick={async () => await handleUnblock(profile)}
+                disabled={loadingId === profile.id}
+                size={"sm"}
+                variant={"outline"}
+              >
+                Unblock
               </Button>
             </div>
           );
