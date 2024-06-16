@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.6.0",
     "@lens-protocol/client": "^2.2.0",
     "@lens-protocol/react-web": "^2.2.0",
     "@lens-protocol/wagmi": "^4.1.2",
@@ -34,12 +35,13 @@
     "pino-pretty": "^11.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "react-hook-form": "^7.52.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
     "viem": "^2.13.8",
     "wagmi": "^2.9.11",
-    "zod": "^3.23.3"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.2",
