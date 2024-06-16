@@ -271,7 +271,7 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
     return null;
   }
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 rounded-lg p-6 py-10 shadow-md">
       <h2 className="mb-2 text-lg font-semibold">Followers</h2>
       <div className="space-y-4">
         {followers.map((follower) => {
