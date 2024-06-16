@@ -185,6 +185,7 @@ function ProfileManagers({ session }: { session: Session | undefined }) {
                 disabled={updatingAddress === address}
                 onClick={() => remove(address)}
                 size="icon"
+                variant={"destructive"}
                 className="rounded-lg p-2 text-white"
               >
                 <TrashIcon
