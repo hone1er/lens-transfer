@@ -6,7 +6,7 @@ import { LensProfiles } from "./LensProfiles";
 import {
   SessionType,
   useLogout,
-  useProfiles,
+  useProfilesManaged,
   useSession,
 } from "@lens-protocol/react-web";
 import { useAccount, useDisconnect } from "wagmi";
@@ -20,18 +20,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "../ui/button";
 
-import Link from "next/link";
-import { Tip } from "./Tip";
 export enum TransferSelection {
   Profile,
   Handle,
 }
 export function LensProfileManager() {
   const { address } = useAccount();
-  const { data: profiles } = useProfiles({
-    where: {
-      ownedBy: [address as string],
-    },
+  const { data: profiles } = useProfilesManaged({
+    for: address as string,
   });
 
   const { execute: executeLogout } = useLogout();

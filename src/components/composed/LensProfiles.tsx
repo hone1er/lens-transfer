@@ -5,7 +5,6 @@
 import {
   SessionType,
   useSession,
-  useProfiles,
   useProfilesManaged,
 } from "@lens-protocol/react-web";
 import React from "react";

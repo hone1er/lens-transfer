@@ -2,9 +2,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { Separator } from "../ui/separator";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -52,42 +55,54 @@ export default function Navbar() {
           <div
             className={` ${
               isOpen
-                ? "absolute right-1 top-10 block w-40 rounded-xl bg-primary"
+                ? "absolute right-0  top-14 z-50 block w-40 rounded-xl rounded-t-none border border-gray-900 bg-primary"
                 : "hidden"
             } w-full  md:flex md:items-center md:gap-4`}
           >
-            <Link href="/lens-tools/profile-manager">
-              <Button
-                variant="ghost"
-                className="block w-full md:inline md:w-auto"
-              >
-                Profile Manager
-              </Button>
-            </Link>
-            <Link href="/lens-tools/transfer-profiles">
-              <Button
-                variant="ghost"
-                className="block w-full md:inline md:w-auto"
-              >
-                Transfer Profiles
-              </Button>
-            </Link>
-            <Link href="/lens-tools/follow-settings">
-              <Button
-                variant="ghost"
-                className="block w-full md:inline md:w-auto"
-              >
-                Follow Settings
-              </Button>
-            </Link>
-            <Link href="/about">
-              <Button
-                variant="ghost"
-                className="block w-full md:inline md:w-auto"
-              >
-                About
-              </Button>
-            </Link>
+            <Separator />
+            <Button
+              variant="ghost"
+              className="block w-full rounded-xl md:inline md:w-auto"
+              onClick={() => {
+                router.push("/lens-tools/profile-manager");
+                setIsOpen(false);
+              }}
+            >
+              Profile Manager
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="block w-full rounded-xl md:inline md:w-auto"
+              onClick={() => {
+                router.push("/lens-tools/transfer-profiles");
+                setIsOpen(false);
+              }}
+            >
+              Transfer Profiles
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="block w-full rounded-xl md:inline md:w-auto"
+              onClick={() => {
+                router.push("/lens-tools/follow-settings");
+                setIsOpen(false);
+              }}
+            >
+              Follow Settings
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="block w-full rounded-xl md:inline md:w-auto"
+              onClick={() => {
+                router.push("/about");
+                setIsOpen(false);
+              }}
+            >
+              About
+            </Button>
           </div>
         </div>
       </div>
