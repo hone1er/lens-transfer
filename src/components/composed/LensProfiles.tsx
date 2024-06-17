@@ -2,7 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 "use client";
-import { SessionType, useSession, useProfiles } from "@lens-protocol/react-web";
+import {
+  SessionType,
+  useSession,
+  useProfiles,
+  useProfilesManaged,
+} from "@lens-protocol/react-web";
 import React from "react";
 import { useAccount } from "wagmi";
 import LensProfileCard from "./LensProfileCard";
@@ -11,10 +16,8 @@ export function LensProfiles() {
   const { address } = useAccount();
   const { data: session, loading } = useSession();
 
-  const { data: profiles } = useProfiles({
-    where: {
-      ownedBy: [address as string],
-    },
+  const { data: profiles } = useProfilesManaged({
+    for: address as string,
   });
   // if the user is logged in only show the profile they are logged in with
   const profileObj = profiles?.find((profile) => {
