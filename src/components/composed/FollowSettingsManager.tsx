@@ -325,9 +325,9 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
     return null;
   }
   return (
-    <div className="space-y-4 rounded-lg p-6 py-10 shadow-md">
-      <h2 className="mb-2 text-lg font-semibold">Followers</h2>
-      <div className="space-y-4">
+    <div className="space-y-2 rounded-lg p-6 px-0 py-10 pb-0 shadow-md ">
+      <h2 className="mb-2 px-6 text-lg font-semibold">Followers</h2>
+      <div className="space-y-1 ">
         {followers.map((follower) => {
           const imgSrc =
             follower.metadata?.picture?.__typename === "ImageSet"
@@ -336,7 +336,10 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
 
           const canFollow = follower.operations.canFollow === TriStateValue.Yes;
           return (
-            <div key={follower.id} className="flex items-center space-x-4">
+            <div
+              key={follower.id}
+              className="flex items-center space-x-4 rounded-lg  border p-4 shadow-sm hover:shadow-md"
+            >
               <div className="relative flex w-full items-center space-x-2">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={imgSrc} />
@@ -348,24 +351,26 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
                     ""}
                 </p>
               </div>
-              {canFollow ? (
+              <div className="flex gap-2">
+                {canFollow ? (
+                  <Button
+                    size={"sm"}
+                    variant={"outline"}
+                    disabled={loading}
+                    onClick={() => handleFollow(follower)}
+                  >
+                    Follow
+                  </Button>
+                ) : null}
                 <Button
+                  onClick={async () => await handleBlock(follower)}
                   size={"sm"}
-                  variant={"outline"}
-                  disabled={loading}
-                  onClick={() => handleFollow(follower)}
+                  disabled={loadingId === follower.id}
+                  variant={"destructive"}
                 >
-                  Follow
+                  Block
                 </Button>
-              ) : null}
-              <Button
-                onClick={async () => await handleBlock(follower)}
-                size={"sm"}
-                disabled={loadingId === follower.id}
-                variant={"destructive"}
-              >
-                Block
-              </Button>
+              </div>
             </div>
           );
         })}
@@ -398,7 +403,10 @@ function BlockedProfiles() {
               ? profile.metadata.picture?.optimized?.uri
               : profile.metadata?.picture?.image.optimized?.uri;
           return (
-            <div key={profile.id} className="flex items-center space-x-4">
+            <div
+              key={profile.id}
+              className="flex items-center space-x-4 rounded-lg border p-4"
+            >
               <div className="relative flex w-full items-center space-x-2">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={imgSrc} />
