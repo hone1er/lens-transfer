@@ -55,11 +55,11 @@ export default function Navbar() {
           <div
             className={` ${
               isOpen
-                ? "absolute right-0  top-14 z-50 block w-40 rounded-xl rounded-t-none border border-gray-900 bg-primary"
+                ? "absolute right-0 top-14 z-50 block w-40 rounded-xl rounded-t-none border border-gray-900 bg-primary"
                 : "hidden"
             } w-full  md:flex md:items-center md:gap-4`}
           >
-            <Separator />
+            {isOpen ? <Separator /> : null}
             <Button
               variant="ghost"
               className="block w-full rounded-xl md:inline md:w-auto"
