@@ -1,7 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { erc721Abi } from "viem";
-import { useAccount, useChainId, useConfig, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  useConfig,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useToast } from "../ui/use-toast";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
@@ -36,14 +43,22 @@ export const LensTransfer = ({
   } = useEns();
   const [handleId, setHandleId] = useState<string | null>(null);
   const { address } = useAccount();
+
   const { toast } = useToast();
   const chainId = useChainId();
   const config = useConfig();
 
+  const { data: approvedAddress } = useReadContract({
+    abi: PERMISSIONLESS_CREATOR_ABI,
+    address: process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+    functionName: "getApproved",
+    args: [profile?.id as unknown as bigint],
+  });
+
   const {
+    data: profileHash,
     writeContractAsync: writeContractAsyncProfile,
     isPending: isPendingProfile,
-    isSuccess: isSuccessProfile,
   } = useWriteContract();
 
   const {
@@ -51,11 +66,19 @@ export const LensTransfer = ({
     isPending: isPendingHandle,
   } = useWriteContract();
 
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    dataUpdatedAt,
+  } = useWaitForTransactionReceipt({
+    hash: profileHash,
+  });
+
   useEffect(() => {
     setHandleId(profile?.handle?.id ?? null);
   }, [profile?.handle?.id]);
 
-  const handleTransferOwnership = async () => {
+  const handleApproveProfile = async () => {
     if (chainId !== polygon.chainId) {
       toast({
         title: "Unsupported Network",
@@ -80,14 +103,55 @@ export const LensTransfer = ({
       });
       return;
     }
+    try {
+      await writeContractAsyncProfile(
+        {
+          abi: erc721Abi,
+          address: process.env
+            .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+          functionName: "approve",
+          args: [
+            process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+            profile.id as unknown as bigint,
+          ],
+        },
+        {
+          onSuccess: (result) => {
+            toast({
+              title: "View Transaction",
+              description: "View the transaction on the blockchain explorer",
+              action: (
+                <ToastAction
+                  onClick={() => {
+                    window.open(`https://polyscan.com/tx/${result}`, "_blank");
+                  }}
+                  altText="View Transaction"
+                >
+                  View transaction
+                </ToastAction>
+              ),
+            });
+          },
+        },
+      );
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          <p className="break-all">{(error as Error)?.message}</p> ?? "",
+      });
+    }
+  };
+  console.log("🚀 ~ dataUpdatedAt:", Date.now() - dataUpdatedAt);
 
+  const handleTransferProfileNFT = async () => {
     try {
       await writeContractAsyncProfile(
         {
           abi: PERMISSIONLESS_CREATOR_ABI,
           address: process.env
-            .NEXT_PUBLIC_LENS_PERMISSIONLESS_CREATOR_CONTRACT as `0x${string}`,
-          functionName: "transferFromKeepingDelegates",
+            .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
+          functionName: "safeTransferFrom",
           args: [
             address!,
             rawTokenAddress as `0x${string}`,
@@ -222,7 +286,7 @@ export const LensTransfer = ({
           <Label htmlFor="transfer-lens">Transfer Profile</Label>
         </div>
       </div>
-      {isSuccessProfile || transferSelection === TransferSelection.Handle ? (
+      {transferSelection === TransferSelection.Handle ? (
         <Button
           disabled={isPendingHandle}
           onClick={handleTransferHandleOwnership}
@@ -230,14 +294,33 @@ export const LensTransfer = ({
         >
           Transfer Handle
         </Button>
-      ) : (
+      ) : approvedAddress === "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d" ? (
         <Button
-          disabled={isPendingProfile}
-          onClick={handleTransferOwnership}
+          disabled={isPendingProfile || isConfirming}
+          onClick={handleTransferProfileNFT}
           size="sm"
         >
           Transfer Profile
         </Button>
+      ) : (
+        <Button
+          disabled={isPendingProfile || isConfirming}
+          onClick={handleApproveProfile}
+          size="sm"
+        >
+          Approve Transfer
+        </Button>
+      )}
+      {isConfirming && (
+        <div>
+          <p
+            className="
+          text-gray-500 dark:text-gray-400
+          "
+          >
+            Waiting for confirmation...
+          </p>
+        </div>
       )}
     </div>
   );
