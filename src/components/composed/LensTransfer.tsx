@@ -106,7 +106,7 @@ export const LensTransfer = ({
     try {
       await writeContractAsyncProfile(
         {
-          abi: erc721Abi,
+          abi: PERMISSIONLESS_CREATOR_ABI,
           address: process.env
             .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
           functionName: "approve",

@@ -150,8 +150,8 @@ export function FollowSettingsManager() {
       </Card>
       {profiles && profiles?.length > 0 ? <LensProfiles /> : null}
       {session?.authenticated ? (
-        <div className="z-0 mx-auto flex max-w-2xl flex-col gap-4 ">
-          <div className=" rounded-lg bg-white p-6 shadow-lg  dark:bg-gray-900 md:p-8">
+        <div className="z-0 mx-auto flex w-full max-w-full flex-col gap-4 ">
+          <div className="rounded-lg bg-white p-6 px-0 shadow-lg  dark:bg-gray-900 md:p-8">
             <div className="mb-6">
               <h1 className="mb-2 text-2xl font-bold">Manage Follow Policy</h1>
               <p className="text-gray-500 dark:text-gray-400">
@@ -325,9 +325,9 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
     return null;
   }
   return (
-    <div className="space-y-2 rounded-lg p-6 px-0 py-10 pb-0 shadow-md ">
+    <div className="space-y-4 rounded-lg p-6 px-2 py-10 pb-2 shadow-md ">
       <h2 className="mb-2 px-6 text-lg font-semibold">Followers</h2>
-      <div className="space-y-1 ">
+      <div className="space-y-2 ">
         {followers.map((follower) => {
           const imgSrc =
             follower.metadata?.picture?.__typename === "ImageSet"

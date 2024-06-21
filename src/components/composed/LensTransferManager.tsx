@@ -16,6 +16,7 @@ import {
   SessionType,
   useLogout,
   useProfiles,
+  useProfilesManaged,
   useSession,
 } from "@lens-protocol/react-web";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
@@ -25,10 +26,8 @@ import { TransferSelection } from "./LensProfileManager";
 
 const LensTransferManager = () => {
   const { address } = useAccount();
-  const { data: profiles } = useProfiles({
-    where: {
-      ownedBy: [address as string],
-    },
+  const { data: profiles } = useProfilesManaged({
+    for: address as string,
   });
   const [transferSelection, setTransferSelection] =
     React.useState<TransferSelection>(TransferSelection.Handle);
