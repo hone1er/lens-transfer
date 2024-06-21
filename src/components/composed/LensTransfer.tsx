@@ -291,6 +291,7 @@ export const LensTransfer = ({
           disabled={isPendingHandle}
           onClick={handleTransferHandleOwnership}
           size="sm"
+          variant="outline"
         >
           Transfer Handle
         </Button>
@@ -299,6 +300,7 @@ export const LensTransfer = ({
           disabled={isPendingProfile || isConfirming}
           onClick={handleTransferProfileNFT}
           size="sm"
+          variant="outline"
         >
           Transfer Profile
         </Button>
@@ -307,6 +309,7 @@ export const LensTransfer = ({
           disabled={isPendingProfile || isConfirming}
           onClick={handleApproveProfile}
           size="sm"
+          variant="outline"
         >
           Approve Transfer
         </Button>

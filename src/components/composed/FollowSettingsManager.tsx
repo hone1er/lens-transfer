@@ -366,7 +366,8 @@ function FollowersList({ followers }: { followers: Profile[] | undefined }) {
                   onClick={async () => await handleBlock(follower)}
                   size={"sm"}
                   disabled={loadingId === follower.id}
-                  variant={"destructive"}
+                  variant={"outline"}
+                  className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                 >
                   Block
                 </Button>
