@@ -1,5 +1,5 @@
 import { Inter as FontSans } from "next/font/google";
-
+import { Analytics } from "@vercel/analytics/react";
 import { cn } from "@/lib/utils";
 
 const fontSans = FontSans({
@@ -12,8 +12,6 @@ import { GeistSans } from "geist/font/sans";
 import { Web3Provider } from "@/context/web3";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/composed/NavBar";
-import { Tip } from "@/components/composed/Tip";
-import Link from "next/link";
 
 export const metadata = {
   title: "Lens Transfer",
@@ -39,6 +37,7 @@ export default function Layout({
         </header>
         <Web3Provider> {children}</Web3Provider>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
