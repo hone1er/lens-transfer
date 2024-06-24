@@ -28,7 +28,7 @@ export default function Cooldown({
       ? ((7 - daysRemaining) / 7) * 100
       : 100;
   return (
-    <Card className="w-full max-w-96 py-[19px] shadow-md">
+    <Card className="w-full  py-[19px] shadow-md">
       {endsOn ? (
         <>
           <CardHeader className="pb-2">

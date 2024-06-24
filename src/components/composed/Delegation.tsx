@@ -18,6 +18,7 @@ import { useToast } from "../ui/use-toast";
 import { useChainId, useConfig } from "wagmi";
 import { ToastAction } from "../ui/toast";
 import { switchChain } from "@wagmi/core";
+import truncateAddress from "@/utils/truncateAddress";
 
 export function Delegation({
   session,
@@ -76,7 +77,7 @@ export function Delegation({
   };
 
   return (
-    <div className="flex w-full max-w-96 flex-col gap-4 place-self-center rounded-lg border p-6 shadow-md md:max-w-full">
+    <div className="flex w-full  flex-col gap-4 place-self-center rounded-lg border p-6 shadow-md md:max-w-full">
       {/* delegation section */}
       <h2 className="text-lg font-semibold">Profile Manager</h2>
 
@@ -254,13 +255,13 @@ function ProfileManagers({ session }: { session: Session | undefined }) {
             return (
               <li key={address}>
                 <div className="flex w-full items-center justify-between rounded-lg p-4 shadow-md">
-                  <p>{address}</p>
+                  <p>{truncateAddress(address)}</p>
                   <Button
                     disabled={updatingAddress === address}
                     onClick={() => remove(address)}
                     size="icon"
-                    variant={"destructive"}
-                    className="rounded-lg p-2 text-white"
+                    variant={"outline"}
+                    className="rounded-lg border border-red-500 p-2 text-red-500"
                   >
                     <TrashIcon
                       className={`${updatingAddress === address ? "animate-spin" : ""}`}

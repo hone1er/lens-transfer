@@ -258,7 +258,7 @@ export const LensTransfer = ({
   };
 
   return (
-    <div className="flex h-full w-full max-w-96 flex-col gap-2 rounded-lg border p-7 shadow-md">
+    <div className="flex h-full w-full flex-col gap-2 rounded-lg border p-7 shadow-md">
       <label className="text-lg font-semibold text-gray-800">
         Transfer Ownership to:
       </label>
@@ -270,7 +270,7 @@ export const LensTransfer = ({
         ensAvatar={ensAvatar!}
         onChange={handleToAddressInput}
       />
-      <div className="flex flex-row gap-2">
+      <div className="flex w-full flex-row gap-2">
         <div className="flex items-center space-x-2">
           <Switch
             id="airplane-mode"
