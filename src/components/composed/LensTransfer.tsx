@@ -5,7 +5,6 @@ import {
   useAccount,
   useChainId,
   useConfig,
-  useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -48,13 +47,6 @@ export const LensTransfer = ({
   const chainId = useChainId();
   const config = useConfig();
 
-  const { data: approvedAddress } = useReadContract({
-    abi: PERMISSIONLESS_CREATOR_ABI,
-    address: process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-    functionName: "getApproved",
-    args: [profile?.id as unknown as bigint],
-  });
-
   const {
     data: profileHash,
     writeContractAsync: writeContractAsyncProfile,
@@ -78,19 +70,22 @@ export const LensTransfer = ({
     setHandleId(profile?.handle?.id ?? null);
   }, [profile?.handle?.id]);
 
-  const handleApproveProfile = async () => {
+  console.log("🚀 ~ dataUpdatedAt:", Date.now() - dataUpdatedAt);
+
+  const handleTransferProfileNFT = async () => {
     if (chainId !== polygon.chainId) {
       toast({
         title: "Unsupported Network",
         description: "Please switch to the Polygon network",
         action: (
           <ToastAction
+            className="place-self-start "
             onClick={async () =>
               await switchChain(config, { chainId: polygon.chainId })
             }
             altText="Switch Network"
           >
-            Switch to Polygon Network
+            Switch network
           </ToastAction>
         ),
       });
@@ -103,48 +98,6 @@ export const LensTransfer = ({
       });
       return;
     }
-    try {
-      await writeContractAsyncProfile(
-        {
-          abi: PERMISSIONLESS_CREATOR_ABI,
-          address: process.env
-            .NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-          functionName: "approve",
-          args: [
-            process.env.NEXT_PUBLIC_LENS_PROFILE_CONTRACT as `0x${string}`,
-            profile.id as unknown as bigint,
-          ],
-        },
-        {
-          onSuccess: (result) => {
-            toast({
-              title: "View Transaction",
-              description: "View the transaction on the blockchain explorer",
-              action: (
-                <ToastAction
-                  onClick={() => {
-                    window.open(`https://polyscan.com/tx/${result}`, "_blank");
-                  }}
-                  altText="View Transaction"
-                >
-                  View transaction
-                </ToastAction>
-              ),
-            });
-          },
-        },
-      );
-    } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          <p className="break-all">{(error as Error)?.message}</p> ?? "",
-      });
-    }
-  };
-  console.log("🚀 ~ dataUpdatedAt:", Date.now() - dataUpdatedAt);
-
-  const handleTransferProfileNFT = async () => {
     try {
       await writeContractAsyncProfile(
         {
@@ -295,7 +248,7 @@ export const LensTransfer = ({
         >
           Transfer Handle
         </Button>
-      ) : approvedAddress === "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d" ? (
+      ) : (
         <Button
           disabled={isPendingProfile || isConfirming}
           onClick={handleTransferProfileNFT}
@@ -303,15 +256,6 @@ export const LensTransfer = ({
           variant="outline"
         >
           Transfer Profile
-        </Button>
-      ) : (
-        <Button
-          disabled={isPendingProfile || isConfirming}
-          onClick={handleApproveProfile}
-          size="sm"
-          variant="outline"
-        >
-          Approve Transfer
         </Button>
       )}
       {isConfirming && (
